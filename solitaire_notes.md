@@ -1,3 +1,61 @@
+# TLDR
+class Solitaire
+  ALPHABET
+  ALPHABET_TO_INTEGER
+  INTEGER_TO_ALPHABET
+
+  initialize(key)
+  encrypt(message)
+  decrypt(cyphertext)
+
+  parsed_message(message_string)
+  add(message, keystream)
+  subtract(message, keystream)
+
+  int_to_letters(encrypted_numbers)
+  keystream(integer)
+
+class Key
+  attr_reader :key
+
+  initialize(key)
+  keystream(count)
+  key_process( key )
+  keystream_value( key_copy )
+
+  joker?( value )
+  validate(key)
+
+# Key Process
+  # ONE
+    # find 53, move up in deck circularly one spot
+    #   TODO: edge case [ 3, ...cards..., 53] # => [ 3, 53, ...cards...]
+  # TWO
+    # find 54, move up in deck curcularly two spots
+  # THREE
+    # triple cut
+    #   top group = [ cards up to not including joker]
+    #   middlge group = [one joker to the other]
+    #   bottom        = [after bottom joker up to end]
+    #
+    #   mutate: key = bottom + middle + top
+  # COUNT CUT
+    # find value of bottom card 
+       # bottom = key[-1]
+    # find the value of that card value = key[bottom - 1]
+    # squish into bottom
+      # key.delete_value(value)
+      # bottom = key.pop
+      # key << value
+      # key << bottom
+  # OUTPUT CARD
+    # top_card = key[0]
+    # output card = key[top_card]
+      # if [53, 54].include? output_card
+      #   # Continute again through process
+      # else
+      #   return output_card
+      # end
 # Solitaire Cipher Pseudo Code
 
 Key Generator

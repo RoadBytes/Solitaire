@@ -18,16 +18,16 @@ class Solitaire
 
   def encrypt(message)
     message_numbers   = parsed_message(message)
-    keystream         = keystream(message.size)
+    keystream         = keystream(message_numbers.size)
     encrypted_numbers = add(message_numbers, keystream)
-    letters(encrypted_numbers)
+    int_to_letters(encrypted_numbers)
   end
 
   def parsed_message(message_string)
     message_numbers   = parsed_message(message)
     keystream         = keystream(message.size)
     encrypted_numbers = add(message_numbers, keystream)
-    letters(encrypted_numbers)
+    int_to_letters(encrypted_numbers)
 
     alpha_characters = message_string.upcase.gsub(/[^A-Z]/, '').chars
     alpha_characters.map do |letter|
@@ -38,7 +38,7 @@ class Solitaire
   def decrypt(cyphertext)
     # same conversion as encrypt to numbers
     decrypted_numbers = subtract(cyphertext_numbers, keystream)
-    letters(decrypted_numbers)
+    int_to_letters(decrypted_numbers)
   end
 
   def add(message, keystream)
@@ -53,7 +53,7 @@ class Solitaire
     end
   end
 
-  def letters(encrypted_numbers)
+  def int_to_letters(encrypted_numbers)
     encrypted_numbers.map do |number|
       ALPHABET[number % 26]
     end.join.scan(/.{1,5}/).join(' ').upcase
