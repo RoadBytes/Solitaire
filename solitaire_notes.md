@@ -26,6 +26,24 @@ Example: "DO NOT USE PC"
 6. convert back to letters
   OSKJJ  JGTMW
 
+## my implementation
+
+1. downcase and remove non chars
+  "DO NOT USE PC".upcase.gsub(/[^a-z]/, '') #=> "DONOTUSEPC"
+_2. !!! Generate Key Stream Letters_
+  * Assume KDWUP ONOWT, can go straight to numbers
+2. convert letters to numbers
+  message: 4 15 14 15 20 21 19 5 16 3
+3. keystream will just be worked in numbers
+  11 4 23 21 16 15 14 15 23 20
+4. add message and key stream
+  * use MOD % to get number back between 1 and 26
+  * 15 19 11 10 10   10 7 20 13 23
+5. convert back to letters
+  * convert numbers to letters
+  * join as groups of letters in groups of 5
+  OSKJJ JGTMW
+
 
 # Decrypting
 
