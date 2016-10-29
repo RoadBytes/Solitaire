@@ -1,4 +1,6 @@
 # TLDR
+
+```
 class Solitaire
   ALPHABET
   ALPHABET_TO_INTEGER
@@ -25,6 +27,7 @@ class Key
 
   joker?( value )
   validate(key)
+```
 
 # Key Process
   # ONE
