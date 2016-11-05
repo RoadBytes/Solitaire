@@ -1,6 +1,5 @@
+# implementation of solitaire cipher
 class Solitaire
-  ALPHABET            = ('A'..'Z').to_a
-
   def self.alpha_setup
     hash = {}
     ALPHABET.each_with_index do |letter, index|
@@ -9,6 +8,7 @@ class Solitaire
     hash
   end
 
+  ALPHABET            = ('A'..'Z').to_a
   ALPHABET_TO_INTEGER = self.alpha_setup
   INTEGER_TO_ALPHABET = ALPHABET_TO_INTEGER.invert
 
@@ -67,15 +67,11 @@ class Solitaire
   end
 end
 
-#TODO, keystream generation
-# move first joker (53) up one
-#
-# maybe key class
 class Key
   attr_accessor :deck
 
   def initialize(key)
-    raise ArgumentError unless validate key
+    raise ArgumentError, 'Key is array 1 - 54' unless validate key
     @deck = key
   end
 

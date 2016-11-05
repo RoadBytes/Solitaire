@@ -1,21 +1,24 @@
+# Test Suite for Solitaire Cipher
+
 require 'minitest/autorun'
-require "minitest/reporters"
+require 'minitest/reporters'
 Minitest::Reporters.use!
 
 require_relative 'solitaire'
 
+# Test for Key
 class KeyTest < MiniTest::Test
   def setup
     new_deck = (1..54).to_a
     @key = Key.new(new_deck)
   end
 
-  def test_next
+  def test_shift_next
     shifted_deck = (1..52).to_a
     shifted_deck << 54
     shifted_deck << 53
 
-    @key.shift_next( 53 )
+    @key.shift_next(53)
 
     assert_equal(shifted_deck, @key.deck)
   end
@@ -25,7 +28,7 @@ class KeyTest < MiniTest::Test
     shifted_deck.unshift 54
     shifted_deck.unshift 1
 
-    @key.shift_next( 54 )
+    @key.shift_next(54)
 
     assert_equal(shifted_deck, @key.deck)
   end
@@ -72,18 +75,18 @@ class KeyTest < MiniTest::Test
   end
 
   def test_count_cut
-    initial_deck = [ 48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
-                     41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
-                     44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
-                     13, 25, 54, 47, 18, 45,  2, 38, 51, 19,  7, 24,  5,
-                      3, 46]
+    initial_deck = [48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
+                    41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
+                    44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
+                    13, 25, 54, 47, 18, 45,  2, 38, 51, 19,  7, 24,  5,
+                     3, 46]
     key          = Key.new(initial_deck)
 
-    final_deck   = [ 48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
-                     41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
-                     44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
-                     13, 25, 54, 47, 18, 45, 38, 51, 19,  7, 24,  5,  3,
-                      2, 46]
+    final_deck   = [48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
+                    41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
+                    44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
+                    13, 25, 54, 47, 18, 45, 38, 51, 19,  7, 24,  5,  3,
+                     2, 46]
 
     key.count_cut
 
@@ -91,11 +94,11 @@ class KeyTest < MiniTest::Test
   end
 
   def test_output_card
-    initial_deck = [ 48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
-                     41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
-                     44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
-                     13, 25, 54, 47, 18, 45,  2, 38, 51, 19,  7, 24,  5,
-                      3, 46]
+    initial_deck = [48, 17, 28, 53, 10, 20,  6, 12, 39,  4,  8, 42, 27,
+                    41, 31, 35, 37, 14,  9, 52, 29, 30, 11,  1, 26, 40,
+                    44, 16, 50, 21, 43, 33, 36, 49, 34, 32, 22, 23, 15,
+                    13, 25, 54, 47, 18, 45,  2, 38, 51, 19,  7, 24,  5,
+                     3, 46]
     key          = Key.new(initial_deck)
 
     card = key.output_card
@@ -106,7 +109,6 @@ class KeyTest < MiniTest::Test
   def test_next_key_stream_value
 
     next_value = @key.next_keystream_value
-    require 'byebug'; byebug
 
     assert_equal(3, next_value)
   end
