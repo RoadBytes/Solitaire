@@ -1,15 +1,16 @@
 class Solitaire
   ALPHABET            = ('A'..'Z').to_a
-  ALPHABET_TO_INTEGER = alpha_setup
-  INTEGER_TO_ALPHABET = ALPHABET_TO_INTEGER.invert
 
-  def alpha_setup
+  def self.alpha_setup
     hash = {}
-    ALPHABET.each do |letter, index|
+    ALPHABET.each_with_index do |letter, index|
       hash[letter] = index + 1
     end
     hash
   end
+
+  ALPHABET_TO_INTEGER = self.alpha_setup
+  INTEGER_TO_ALPHABET = ALPHABET_TO_INTEGER.invert
 
   def initialize(key)
     # takes in array of 1 to 54
@@ -71,31 +72,126 @@ end
 #
 # maybe key class
 class Key
-  attr_reader :key
+  attr_accessor :deck
 
   def initialize(key)
-    raise ArgumentError if validate key
-    @key = key
+    raise ArgumentError unless validate key
+    @deck = key
   end
 
   def keystream(count)
-    key_copy = key.copy
     (1..count).map do |integer|
-      keystream_value( key_copy )
+      next_keystream_value
     end
   end
 
   def key_process( key )
+    joker_one_move
+    joker_two_move
+    triple_cut
+    key = count_cut(key)
+    key_character = top_card_count(key)
 
+    [key_character, key]
   end
 
-  def keystream_value( key_copy )
-    next_value = ''
-    loop  do
-      next_value = key_process key_copy
-      break unless joker? next_key_value
+  def triple_cut
+    if joker_one_before_joker_two?
+      top, middle_bottom = split_at(deck, 53)
+      joker_one          = top.pop
+      middle_bottom.unshift joker_one
+      middle, bottom     = split_at(middle_bottom, 54)
+
+      self.deck = bottom + middle + top
+    else
+      top, middle_bottom = split_at(deck, 54)
+      joker_two          = top.pop
+      middle_bottom.unshift joker_two
+      middle, bottom     = split_at(middle_bottom, 53)
+
+      self.deck = bottom + middle + top
     end
-    next_value
+  end
+
+  def count_cut
+    bottom_card     = deck[-1]
+    cut_card_index  = bottom_card - 1
+    cut_card        = deck.delete_at(cut_card_index)
+
+    bottom_card = deck.pop
+    deck.push cut_card
+    deck.push bottom_card
+  end
+
+  def output_card
+    top_card   = deck[0]
+    card_index = top_card - 1
+    deck[card_index]
+  end
+
+  def joker_one_before_joker_two?
+    joker_one_location = deck.index 53
+    joker_two_location = deck.index 54
+    joker_one_location < joker_two_location
+  end
+
+  def split_at(cards, card)
+    card_index = cards.index card
+    [cards[0..card_index], cards[(card_index + 1)..-1]]
+  end
+
+  def next_keystream_value
+    joker_one_move
+    joker_two_move
+    triple_cut
+    count_cut
+    output_card
+  end
+
+  def shift_next( card )
+    if last_card_in_deck? card
+      shift_last_card_over
+    else
+      shift_middle_card( card )
+    end
+  end
+
+  def joker_one_move
+    shift_next( 53 )
+  end
+
+  def joker_two_move
+    shift_next( 54 )
+    shift_next( 54 )
+  end
+
+  def shift_middle_card( card )
+    top_half, bottom_half = split_at(deck, card)
+
+    card  = top_half.pop
+    next_item = bottom_half.shift
+
+    bottom_half.unshift(card)
+    top_half.push(next_item)
+
+    self.deck = top_half + bottom_half
+  end
+
+  def last_card_in_deck? card
+    card_location = deck.index card
+    card_location == (deck.size - 1)
+  end
+
+  def shift_last_card_over
+    last_card  = deck.pop
+    first_card = deck.shift
+
+    deck.unshift last_card
+    deck.unshift first_card
+  end
+
+  def cut_deck( index )
+    [deck[0..index], deck[(index + 1)..-1]]
   end
 
   def joker?( value )
@@ -106,34 +202,3 @@ class Key
     key.sort == (1..54).to_a
   end
 end
-
-# Key Process
-  # ONE
-    # find 53, move up in deck circularly one spot
-    #   TODO: edge case [ 3, ...cards..., 53] # => [ 3, 53, ...cards...]
-  # TWO
-    # find 54, move up in deck curcularly two spots
-  # THREE
-    # triple cut
-    #   top group = [ cards up to not including joker]
-    #   middlge group = [one joker to the other]
-    #   bottom        = [after bottom joker up to end]
-    #
-    #   mutate: key = bottom + middle + top
-  # COUNT CUT
-    # find value of bottom card 
-       # bottom = key[-1]
-    # find the value of that card value = key[bottom - 1]
-    # squish into bottom
-      # key.delete_value(value)
-      # bottom = key.pop
-      # key << value
-      # key << bottom
-  # OUTPUT CARD
-    # top_card = key[0]
-    # output card = key[top_card]
-      # if [53, 54].include? output_card
-      #   # Continute again through process
-      # else
-      #   return output_card
-      # end

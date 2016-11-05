@@ -123,38 +123,71 @@ _2. !!! Generate Key Stream Letters_
 
 # Generating Keystream Letters
 
-* Start with deck of cards, 52 + 2 unique jokers 53, 54
-  * one arrangement of cards is a key...
-    (1..54).to_a.shuffle
-  * maybe have method that converts deck into key
+  * Start with deck of cards, 52 + 2 unique jokers 53, 54
+    * one arrangement of cards is a key...
+      (1..54).to_a.shuffle
+    * maybe have method that converts deck into key
 
-* !!! Generate output character
-  1. Find first joker 53, move one card down
-    * NOTE: circular array in moving
-  2. Find second joker 54, move two cards down
-
-> If you have any doubt, remember to move the A joker before the B joker. And be
-> careful when the jokers are at the bottom of the deck. If the joker is the
-> last card, think of it as the first card before you start counting.
-  (moving joker from bottom to top is not a move?)
-
-  3. Triple cut
-    2 4 6 B 5 8 7 1 A 3 9 becomes
-    3 9 B 5 8 7 1 A 2 4 6
-
-  4. Count cut
-    * clubs, diamond + 13 , hearts + 26, spades + 39,
-      both jokers are 53
-    * count value of bottom card off the top
-    * and 'squish' into bottom of deck
-    * ex: if 4 was the 9th card,
-      7 ... cards .. 4 5 ... cards ... 8 9 becomes
-      5 ... cards ... 8 7 ... cards .. 4 9
-   5. Find output card
-     * see top card
-     * count down that many cards
-     * that card's value becomes the output
-       unless it's a joker, then you have to repeat
-   6. convert card to number
+  * !!! Generate output character
+#joker_one_move
+    1. Find first joker 53, move one card down
+      * NOTE: circular array in moving
+#joker_two_move
+    2. Find second joker 54, move two cards down
+#triple_cut
+    3. Triple cut
+      2 4 6 B 5 8 7 1 A 3 9 becomes
+      3 9 B 5 8 7 1 A 2 4 6
+#count_cut
+    4. Count cut
+      * clubs, diamond + 13 , hearts + 26, spades + 39,
+        both jokers are 53
+      * count value of bottom card off the top
+      * and 'squish' into bottom of deck
+      * ex: if 4 was the 9th card,
+        7 ... cards .. 4 5 ... cards ... 8 9 becomes
+        5 ... cards ... 8 7 ... cards .. 4 9
+#output_card
+     5. Find output card
+       * see top card
+       * count down that many cards
+       * that card's value becomes the output
+         unless it's a joker, then you have to repeat
+     6. convert card to number
 
 # Keying the Deck
+
+
+# Key Process
+  # ONE
+    # next( joker_one )
+    # find 53, move up in deck circularly one spot
+    #
+    #   TODO: edge case [ 3, ...cards..., 53] # => [ 3, 53, ...cards...]
+  # TWO
+    # next next (joker_two)
+    # find 54, move up in deck curcularly two spots
+  # THREE
+    # triple cut
+    #   top group = [ cards up to not including joker]
+    #   middlge group = [one joker to the other]
+    #   bottom        = [after bottom joker up to end]
+    #
+    #   mutate: key = bottom + middle + top
+  # COUNT CUT
+    # find value of bottom card 
+       # bottom = key[-1]
+    # find the value of that card value = key[bottom - 1]
+    # squish into bottom
+      # key.delete_value(value)
+      # bottom = key.pop
+      # key << value
+      # key << bottom
+  # OUTPUT CARD
+    # top_card = key[0]
+    # output card = key[top_card]
+      # if [53, 54].include? output_card
+      #   # Continute again through process
+      # else
+      #   return output_card
+      # end
